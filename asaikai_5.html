@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>朝会</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: #f7f8fa;
+    color: #333;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ヘッダー */
+  .page-header {
+    margin-bottom: 2rem;
+  }
+  .page-title {
+    font-size: 26px;
+    font-weight: 500;
+    color: #2a2a2a;
+    letter-spacing: 0.02em;
+  }
+  .page-date {
+    font-size: 13px;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  /* セクション共通 */
+  .section {
+    background: #fff;
+    border: 1px solid #e8eaed;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .section-head {
+    font-size: 13px;
+    font-weight: 500;
+    color: #7BA8B5;
+    margin-bottom: 0.75rem;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eef2f3;
+    letter-spacing: 0.04em;
+  }
+
+  /* リンクブロック */
+  .info-line {
+    font-size: 13px;
+    color: #555;
+    line-height: 2;
+  }
+  .info-line a {
+    color: #7BA8B5;
+    text-decoration: none;
+    border-bottom: 1px solid #b8d4db;
+    padding-bottom: 1px;
+  }
+  .info-line a:hover { color: #5a8f9e; }
+  .pw {
+    display: inline-block;
+    font-size: 11px;
+    background: #f0f7f9;
+    color: #7BA8B5;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* メンバーグリッド */
+  .member-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 480px) {
+    .member-grid { grid-template-columns: 1fr; }
+  }
+  .member-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .member-name {
+    font-size: 13px;
+    color: #666;
+    min-width: 100px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .member-input {
+    flex: 1;
+    padding: 5px 10px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    border: 1px solid #e0e4e8;
+    border-radius: 8px;
+    background: #fafbfc;
+    color: #333;
+    transition: border-color 0.15s, background 0.15s;
+    outline: none;
+  }
+  .member-input:focus {
+    border-color: #7BA8B5;
+    background: #fff;
+  }
+
+  /* フリーテキスト */
+  .free-textarea {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    border: 1px solid #e0e4e8;
+    border-radius: 8px;
+    background: #fafbfc;
+    color: #333;
+    resize: vertical;
+    min-height: 60px;
+    line-height: 1.7;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .free-textarea:focus {
+    border-color: #7BA8B5;
+    background: #fff;
+  }
+
+  /* Backlogリンク */
+  .backlog-link {
+    display: inline-block;
+    font-size: 12px;
+    color: #7BA8B5;
+    text-decoration: none;
+    border-bottom: 1px solid #b8d4db;
+    margin-top: 6px;
+  }
+  .backlog-link:hover { color: #5a8f9e; }
+
+  /* リセットボタン */
+  .footer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .reset-btn {
+    padding: 8px 20px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    border: 1px solid #d0d4d8;
+    border-radius: 8px;
+    background: #fff;
+    color: #888;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .reset-btn:hover { background: #f0f7f9; color: #7BA8B5; border-color: #7BA8B5; }
+
+  /* トースト */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #7BA8B5;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    padding: 8px 22px;
+    border-radius: 30px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <div class="page-title" id="pageTitle"></div>
+    <div class="page-date" id="pageDate"></div>
+  </div>
+
+  <!-- 全体共有 -->
+  <div class="section">
+    <div class="section-head">※フォーマット ＜全体共有＞</div>
+    <div class="info-line">
+      ・<a href="https://yukiwatanabe-gif.github.io/brand-calendar/" target="_blank">全セクションカレンダー</a>
+      <span class="pw">PW：yogibo2026</span>
+    </div>
+  </div>
+
+  <!-- 共有：今日やること -->
+  <div class="section">
+    <div class="section-head">＜共有＞ 今日やることざっくり。</div>
+    <div class="member-grid" id="memberGrid"></div>
+  </div>
+
+  <!-- 連絡事項 -->
+  <div class="section">
+    <div class="section-head">＜連絡事項・お困り事・相談があればこちらに＞</div>
+    <textarea class="free-textarea" placeholder="自由記入..."></textarea>
+  </div>
+
+  <!-- EC・広告 -->
+  <div class="section">
+    <div class="section-head">＜EC・広告共有＞</div>
+    <textarea class="free-textarea" placeholder="自由記入..."></textarea>
+  </div>
+
+  <!-- PR配信 -->
+  <div class="section">
+    <div class="section-head">＜PR配信スケジュール確認＞</div>
+    <div class="info-line">
+      ・文章納期が近いもの<br>
+      ・配信設定をするもの<br>
+      ・配信完了したものはステータスを完了にしてください。
+    </div>
+    <a class="backlog-link" href="https://yukiwatanabe-gif.github.io/backlog-calendar/" target="_blank">Backlogカレンダー →</a>
+    <span class="pw">PW：pugsan</span>
+  </div>
+
+  <div class="footer">
+    <button class="reset-btn" onclick="resetAll()">🔄 リセット（翌日用）</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">リセットしました</div>
+
+<script>
+  const MEMBERS = [
+    "ぱぐ","もえたん","はる","あべべ",
+    "じょー","ちゃっぷ","みっちー","ちゅんちゅん",
+    "はなこ","さちこ","DJ KAKITA","みーやん",
+    "おはっちゃん","マーヤ"
+  ];
+  const WDAYS = ["日","月","火","水","木","金","土"];
+
+  function initDate() {
+    const d = new Date();
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    const wd = WDAYS[d.getDay()];
+    document.getElementById("pageTitle").textContent = m + "月朝会";
+    document.getElementById("pageDate").textContent =
+      d.getFullYear() + "年" + m + "月" + day + "日（" + wd + "）";
+  }
+
+  function buildMembers() {
+    const grid = document.getElementById("memberGrid");
+    MEMBERS.forEach(function(name) {
+      const row = document.createElement("div");
+      row.className = "member-row";
+      const label = document.createElement("span");
+      label.className = "member-name";
+      label.textContent = "・" + name + "：";
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "member-input";
+      input.placeholder = "今日やること";
+      row.appendChild(label);
+      row.appendChild(input);
+      grid.appendChild(row);
+    });
+  }
+
+  function resetAll() {
+    document.querySelectorAll(".member-input, .free-textarea").forEach(function(el) {
+      el.value = "";
+    });
+    const toast = document.getElementById("toast");
+    toast.classList.add("show");
+    setTimeout(function() { toast.classList.remove("show"); }, 2000);
+  }
+
+  initDate();
+  buildMembers();
+</script>
+</body>
+</html>
